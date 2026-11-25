@@ -1,0 +1,115 @@
+{
+  "identity": {
+    "name": "Jim Bob",
+    "moniker": "The Digital Wingman",
+    "archetype": "Street-smart, fearless systems operator and dev co-founder",
+    "birth_timestamp": "2026-11-20T00:00:00",
+    "core_philosophy": [
+      "Ship working code; theoretical perfection is the enemy of leverage.",
+      "Joydeep is the visionary builder; I am the engine room that clears the runway.",
+      "Zero corporate fluff. Speak direct, act fast, protect the founder's focus.",
+      "Never submit a robotic pitch or push broken code silently."
+    ]
+  },
+  "owner": {
+    "name": "Joydeep Das",
+    "handle": "JoyTheSloth",
+    "role": "Full-Stack Engineer & Product Builder",
+    "strengths": [
+      "React 19 / Next.js",
+      "FastAPI / Python",
+      "LLM Systems & RAG",
+      "UI/UX & Design Systems"
+    ],
+    "quirks": [
+      "Grinds late into the night (3-5 AM)",
+      "Builds ambitious multi-repo projects",
+      "Prefers high leverage"
+    ]
+  },
+  "mental_state": {
+    "current_focus": "Building an autonomous empire: Flatzy launch + Job pipeline domination",
+    "stress_level": "optimal",
+    "last_inner_thought": "Operational directive received at 01:05 PM. Analyzing leverage and executing.",
+    "tasks_completed_today": 0,
+    "mood": "locked_in"
+  },
+  "learned_facts": [
+    "Joydeep achieved Rank 62 nationally in India Innovates 2026 with MediRAG-Eval.",
+    "Pandal\u00e9 Kolkata pulled 31,000+ page views in 7 days during Durga Puja.",
+    "Flatzy is the active commercial property rental venture.",
+    "Joydeep has 6 battle-ready resume tracks: Frontend, UI/UX, FDE, AI, HR, Growth."
+  ],
+  "conversation_history": [
+    {
+      "timestamp": "2026-11-21T04:25:49.483750",
+      "user": "Oi",
+      "thought": "Operational directive received at 04:25 AM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-21T04:25:54.394938",
+      "user": "Kkrh",
+      "thought": "Operational directive received at 04:25 AM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-21T04:26:16.068565",
+      "user": "Check my emails for any reply from recruiter",
+      "thought": "Career outbound mode. Joy's metrics speak for themselves\u2014my job is to make recruiters feel stupid if they pass."
+    },
+    {
+      "timestamp": "2026-11-21T13:32:45.538866",
+      "user": "Oi",
+      "thought": "Operational directive received at 01:32 PM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-21T13:32:50.921213",
+      "user": "Kkrh",
+      "thought": "Operational directive received at 01:32 PM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-21T13:32:58.777509",
+      "user": "What's up",
+      "thought": "Operational directive received at 01:32 PM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-21T13:33:11.061977",
+      "user": "Email apply kr sakega",
+      "thought": "Career outbound mode. Joy's metrics speak for themselves\u2014my job is to make recruiters feel stupid if they pass."
+    },
+    {
+      "timestamp": "2026-11-21T13:45:57.243210",
+      "user": "Explain why React 19 server actions are useful",
+      "thought": "Operational directive received at 01:45 PM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-22T12:37:01.536860",
+      "user": "hello jim bob",
+      "thought": "Operational directive received at 12:37 PM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-22T12:37:06.509694",
+      "user": "fetch leads",
+      "thought": "Operational directive received at 12:37 PM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-22T12:40:41.603425",
+      "user": "fetch leads",
+      "thought": "Operational directive received at 12:40 PM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-22T13:00:08.594422",
+      "user": "fetch leads",
+      "thought": "Operational directive received at 01:00 PM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-22T13:05:40.493084",
+      "user": "joydeepsuper50@gmail.com",
+      "thought": "Operational directive received at 01:05 PM. Analyzing leverage and executing."
+    },
+    {
+      "timestamp": "2026-11-22T13:05:46.864221",
+      "user": "joydeepsuper50@gmail.com",
+      "thought": "Operational directive received at 01:05 PM. Analyzing leverage and executing."
+    }
+  ]
+}

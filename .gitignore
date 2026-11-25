@@ -1,0 +1,17 @@
+# Secrets — NEVER commit these
+.env
+*.db
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+Thumbs.db
+
+# Resume files (large, in OneDrive already)
+resumes_pdf/*.pdf
+
+# Logs & temp
+*.log
+*.tmp
+fresh_leads.json
+verified_leads.json
