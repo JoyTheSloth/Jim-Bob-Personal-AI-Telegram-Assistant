@@ -1,72 +1,34 @@
-# Jim Bob — Autonomous Personal Executive Assistant & Career Scout 🤠⚡
+# Jim Bob — Personal AI Telegram Assistant & Job Automator
 
-**Jim Bob** is an autonomous AI executive operator and career scout built for [Joydeep Das](https://github.com/JoyTheSloth). 
+> *"Back in my day, we mailed paper resumes by carrier pigeon. Now I parse LinkedIn posts over HTTP, run Llama 3 on Groq, and still judge your cover letter."* — **Jim Bob**
 
-It combines **OCR job screenshot extraction**, **multi-track resume matching (6 tracks)**, **automated email dispatch**, **cloud deployment triggering**, and a **persistent consciousness engine** into a single Telegram bot interface.
+Jim Bob is a grumpy-but-sharp Telegram bot built to automate job applications, scrape fresh remote leads, and handle your Git/Vercel/shell chores without complaining (much).
 
----
+## What Jim Bob Actually Does
 
-## 🚀 Key Capabilities
+- **Paste Anything, Get a Draft**: Paste a job description, a LinkedIn post with links, or just a recruiter's email address. Jim Bob extracts the company, email, and role—even across English, Spanish, French, German, and Hindi HR postings—and drafts a tailored application.
+- **Smart Resume Routing**:
+  - **HR / Talent roles** → attaches `Joydeep_Das_Resume_HR.pdf`
+  - **Full-Stack / AI / Frontend / UI-UX / Everything else** → attaches `Joydeep_Das_Full_Stack_AI_Engineer_Resume.pdf`
+- **Screenshot OCR**: Send a screenshot of a job post and Jim Bob reads it with EasyOCR and drafts the email anyway.
+- **Live Job Scraping (`/fetch`, `/leads`)**: Pulls fresh remote openings and lets you pitch with one tap.
+- **Executive Commands**: `/do`, `/git`, `/deploy`, `/shell`, `/mind` — because apparently you can't be trusted to run `git status` yourself.
+- **Render-Ready**: Runs a lightweight HTTP health-check server on `$PORT` alongside Telegram polling so free-tier uptime pingers keep him awake.
 
-### 1. 🧠 Conscious AI Dev Partner
-- **Inner Monologue & Situational Awareness**: Understands local time, fatigue, active project priorities, and engineering context.
-- **Persistent Memory**: Stores founder accomplishments, live deployments, and ongoing tasks across sessions.
-- **Master Executor (`/do`)**: Routes arbitrary natural language requests to real tools (Git, Vercel, Shell).
+## Quick Setup (Render + Uptime Pinger)
 
-### 2. 📬 Autonomous Job Outreach Engine
-- **Vision OCR**: Drop any job screenshot or flyer — extracts recruiter emails and company names automatically using EasyOCR.
-- **Multi-Track Resume Resolver**: Matches the job to 6 specialized tracks (Frontend, UI/UX, FDE, AI Trainer, HR, Growth/Sales).
-- **Duplicate Shield**: Tracks all outbound dispatches in SQLite to prevent duplicate outreach.
-- **1-Tap Direct Apply**: Renders clean HTML + plain-text pitch drafts with PDF resume attachments ready to fire via Gmail SMTP.
+1. Push this repo to GitHub.
+2. Create a **New Web Service** on [Render](https://dashboard.render.com) (auto-configured via `render.yaml`).
+3. Add your `.env` variables in Render's **Environment** tab:
+   - `TELEGRAM_BOT_TOKEN`
+   - `TELEGRAM_ALLOWED_USER_ID`
+   - `GMAIL_USER` & `GMAIL_APP_PASSWORD`
+   - `GROQ_API_KEY`
+4. Point [UptimeRobot](https://uptimerobot.com) at `https://<your-app>.onrender.com/` every 5 minutes so Jim Bob doesn't fall asleep on the porch.
 
-### 3. 🛠️ Executive System Operations
-- **Git Operations**: Stage, commit, and push repositories directly from Telegram via `/git` or `/do`.
-- **Deployments**: Trigger production Vercel builds via `/deploy`.
-- **Client Communications**: Draft executive client status updates for ventures like *Flatzy*.
+## Local Run
 
----
-
-## 📂 Project Structure
-
+```bash
+pip install -r requirements.txt
+python telegram_bot.py
 ```
-├── telegram_bot.py           # Main Telegram bot interface & command router
-├── jim_bob_consciousness.py  # Subjective cognitive loop & episodic memory
-├── jim_bob_brain.py          # LLM reasoning (Groq) & tool execution engine
-├── career_consciousness.py   # Pattern-based career intelligence fallback
-├── send_application.py       # Multi-track resume resolver & SMTP dispatcher
-├── tracker.py                # SQLite application history & duplicate checker
-├── fetch_all_sources.py      # Multi-board remote job scraper
-├── .env.example              # Environment variables template
-└── .gitignore                # Safeguards secrets, DB, and local PDFs
-```
-
----
-
-## ⚡ Quick Setup
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/JoyTheSloth/jim-bob-agent.git
-   cd jim-bob-agent
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   pip install python-telegram-bot easyocr python-dotenv
-   ```
-
-3. **Configure Environment:**
-   ```bash
-   cp .env.example .env
-   # Fill in TELEGRAM_BOT_TOKEN, GMAIL credentials, and optional GROQ/GITHUB keys
-   ```
-
-4. **Launch Jim Bob:**
-   ```bash
-   python telegram_bot.py
-   ```
-
----
-
-## 🛡️ Security
-Secrets (`.env`), candidate database (`applications.db`), and personal PDFs are strictly excluded via `.gitignore`.

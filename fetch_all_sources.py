@@ -36,6 +36,14 @@ def evaluate_job(title, company, description, tags=None):
     tags_lower = [t.lower() for t in (tags or [])]
     full_title_tags = f"{t_lower} {' '.join(tags_lower)}"
 
+    # Exclude senior/lead/manager roles (fresher & entry-level only)
+    senior_titles = [
+        'senior', 'sr.', 'sr ', 'staff', 'principal', 'lead', 'manager',
+        'director', 'architect', 'head of', 'vp ', 'vice president', 'chief'
+    ]
+    if any(s in t_lower for s in senior_titles):
+        return None
+
     # Exclude non-relevant domains
     irrelevant_titles = [
         'accountant', 'wedding coordinator', 'sales executive', 'tax manager',
@@ -342,13 +350,88 @@ def fetch_remotive_all():
             print(f"[Remotive {cat_slug}] Error: {e}")
     return leads
 
+def fetch_himalayas_all():
+    print("Scraping Himalayas...")
+    leads = []
+    try:
+        req = urllib.request.Request('https://himalayas.app/jobs/api?limit=50', headers=HEADERS)
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+        for item in data.get('jobs', []):
+            title = item.get('title', '')
+            company = item.get('companyName', '') or 'Remote Company'
+            desc = clean_html(item.get('description', ''))
+            tags = " ".join(item.get('categories', []) or [])
+            eval_res = evaluate_job(title, company, desc, tags)
+            if eval_res:
+                category, is_junior = eval_res
+                leads.append({
+                    'source': 'Himalayas',
+                    'company': company,
+                    'title': title,
+                    'category': category,
+                    'is_junior': is_junior,
+                    'emails': extract_emails(desc),
+                    'url': item.get('applicationLink', '') or f"https://himalayas.app/jobs/{item.get('slug', '')}",
+                    'apply_url': item.get('applicationLink', '') or f"https://himalayas.app/jobs/{item.get('slug', '')}",
+                    'raw_snippet': desc[:400],
+                })
+    except Exception as e:
+        print(f"Error scraping Himalayas: {e}")
+    return leads
+
+def fetch_workingnomads_all():
+    print("Scraping Working Nomads...")
+    leads = []
+    try:
+        req = urllib.request.Request('https://www.workingnomads.com/api/exposed_jobs/', headers=HEADERS)
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+        for item in data[:60]:
+            title = item.get('title', '')
+            company = item.get('company_name', '') or 'Remote Company'
+            desc = clean_html(item.get('description', ''))
+            tags = item.get('category_name', '') or ''
+            eval_res = evaluate_job(title, company, desc, tags)
+            if eval_res:
+                category, is_junior = eval_res
+                leads.append({
+                    'source': 'WorkingNomads',
+                    'company': company,
+                    'title': title,
+                    'category': category,
+                    'is_junior': is_junior,
+                    'emails': extract_emails(desc),
+                    'url': item.get('url', ''),
+                    'apply_url': item.get('url', ''),
+                    'raw_snippet': desc[:400],
+                })
+    except Exception as e:
+        print(f"Error scraping Working Nomads: {e}")
+    return leads
+
+def score_job_against_profile(title: str, description: str, tags=None) -> int:
+    """Score a job (0-100) against Joydeep's Full-Stack & AI Engineer profile."""
+    text = f"{title} {description} {' '.join(tags or [])}".lower()
+    core_skills = [
+        "react", "next.js", "nextjs", "typescript", "javascript",
+        "node.js", "nodejs", "python", "fastapi", "llm", "rag",
+        "ai", "gemini", "groq", "tailwind", "figma", "ui/ux", "full-stack", "fullstack"
+    ]
+    hits = sum(1 for s in core_skills if s in text)
+    return min(100, 35 + hits * 8)
+
 def run():
     all_leads = []
     all_leads.extend(fetch_remoteok_all())
     all_leads.extend(fetch_weworkremotely_all())
-    all_leads.extend(fetch_jobicy_all())
     all_leads.extend(fetch_remotive_all())
-    all_leads.extend(fetch_hn_whoishiring())
+    all_leads.extend(fetch_himalayas_all())
+    all_leads.extend(fetch_workingnomads_all())
+
+    for l in all_leads:
+        l['match_score'] = score_job_against_profile(l.get('title', ''), l.get('raw_snippet', ''))
+    all_leads.sort(key=lambda x: x.get('match_score', 0), reverse=True)
 
     print(f"\n==========================================")
     print(f"Total verified matching tech/design leads: {len(all_leads)}")
@@ -356,7 +439,52 @@ def run():
     with open('verified_leads.json', 'w', encoding='utf-8') as f:
         json.dump(all_leads, f, indent=2)
 
+    send_leads_email_digest(all_leads)
     return all_leads
+
+def send_leads_email_digest(leads):
+    import os, smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        pass
+    gmail_user = os.getenv("GMAIL_USER")
+    gmail_pass = os.getenv("GMAIL_APP_PASSWORD")
+    if not gmail_user or not gmail_pass or not leads:
+        return
+    top_leads = leads[:15]
+    rows = ""
+    for l in top_leads:
+        rows += (
+            f"<tr>"
+            f"<td style='padding:8px;border-bottom:1px solid #eee;'><b>{l.get('company','')}</b></td>"
+            f"<td style='padding:8px;border-bottom:1px solid #eee;'><a href='{l.get('apply_url') or l.get('url','#')}'>{l.get('title','')}</a></td>"
+            f"<td style='padding:8px;border-bottom:1px solid #eee;'>{l.get('source','')}</td>"
+            f"<td style='padding:8px;border-bottom:1px solid #eee;'><b>{l.get('match_score', 0)}%</b></td>"
+            f"</tr>"
+        )
+    html_body = (
+        f"<html><body style='font-family:Arial,sans-serif;color:#111;'>"
+        f"<h2>Jim Bob's Fresh Remote Leads ({len(leads)} found)</h2>"
+        f"<table style='width:100%;border-collapse:collapse;'>"
+        f"<tr style='background:#f4f4f5;text-align:left;'><th style='padding:8px;'>Company</th><th style='padding:8px;'>Role</th><th style='padding:8px;'>Source</th><th style='padding:8px;'>Match</th></tr>"
+        f"{rows}</table></body></html>"
+    )
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = f"Jim Bob: {len(leads)} Fresh Remote Leads"
+    msg["From"] = gmail_user
+    msg["To"] = gmail_user
+    msg.attach(MIMEText(html_body, "html"))
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(gmail_user, gmail_pass)
+            server.sendmail(gmail_user, gmail_user, msg.as_string())
+        print(f"Sent HTML leads digest to {gmail_user}")
+    except Exception as e:
+        print(f"Email digest error: {e}")
 
 if __name__ == "__main__":
     run()

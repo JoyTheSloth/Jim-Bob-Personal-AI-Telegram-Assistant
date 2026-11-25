@@ -189,7 +189,7 @@ def extract_job_info(text: str):
     to_email = emails[0] if emails else None
 
     lower = text.lower()
-    if any(k in lower for k in ["hr", "human resource", "talent acquisition", "recruiter", "talent sourcer", "people operations"]):
+    if any(k in lower for k in ["hr", "human resource", "talent acquisition", "recruiter", "talent sourcer", "people operations", "recursos humanos", "ressources humaines", "personalwesen", "reclutamiento", "recrutement", "मानव संसाधन"]):
         role = "hr"
         role_title = "Talent Acquisition & Creator Sourcing Associate"
     elif any(k in lower for k in ["ai trainer", "llm trainer", "data annotator", "ai evaluation", "prompt engineer", "ai tutor"]):
@@ -525,15 +525,15 @@ Portfolio: {portfolio_link} | GitHub: {github_link} | LinkedIn: {linkedin_link}
 def render_draft_preview(draft: dict) -> tuple[str, InlineKeyboardMarkup]:
     role = draft["role"]
     filename_map = {
-        "uiux": "Joydeep_Das_UIUX_CV.pdf",
-        "frontend": "Joydeep_Das_Frontend_CV.pdf",
-        "fde": "Joydeep_Das_FDE_Resume.pdf",
-        "ai": "Joydeep_Das_AI.pdf",
+        "uiux": "Joydeep_Das_Full_Stack_AI_Engineer_Resume.pdf",
+        "frontend": "Joydeep_Das_Full_Stack_AI_Engineer_Resume.pdf",
+        "fde": "Joydeep_Das_Full_Stack_AI_Engineer_Resume.pdf",
+        "ai": "Joydeep_Das_Full_Stack_AI_Engineer_Resume.pdf",
         "hr": "Joydeep_Das_Resume_HR.pdf",
-        "sales": "ContenNSales.pdf",
-        "developer": "Joydeep_Das_Developer_CV.pdf"
+        "sales": "Joydeep_Das_Full_Stack_AI_Engineer_Resume.pdf",
+        "developer": "Joydeep_Das_Full_Stack_AI_Engineer_Resume.pdf",
     }
-    pdf_filename = filename_map.get(role, "Joydeep_Das_Frontend_CV.pdf")
+    pdf_filename = filename_map.get(role, "Joydeep_Das_Full_Stack_AI_Engineer_Resume.pdf")
     
     keyboard = [
         [
@@ -913,6 +913,118 @@ async def fetch_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await status_msg.edit_text(f"❌ Scraping error: `{e}`. Check console logs.", parse_mode="Markdown")
 
+def _generate_groq_hook(job_text: str, company: str, role_title: str) -> str | None:
+    """Generate a 1-sentence tailored opening hook using Groq based on the pasted job text."""
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key or len(job_text.strip()) < 25:
+        return None
+    payload = json.dumps({
+        "model": "llama-3.1-8b-instant",
+        "messages": [{
+            "role": "user",
+            "content": f"Write 1 concise, natural opening sentence for a cold job application email to {company} for {role_title}, referencing the specific tech stack or focus in this post:\n\n{job_text[:1000]}"
+        }],
+        "temperature": 0.4,
+        "max_tokens": 80,
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.groq.com/openai/v1/chat/completions",
+        data=payload,
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=8) as resp:
+        data = json.loads(resp.read().decode("utf-8"))
+    return data["choices"][0]["message"]["content"].strip().strip('"')
+
+async def followups_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ALLOWED_USER_ID:
+        return
+    import sqlite3
+    db_path = tracker.DB_PATH
+    if not db_path.exists():
+        await update.message.reply_text("No applications logged yet.")
+        return
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute("SELECT company, recipient_email, role, sent_at FROM applications WHERE datetime(sent_at) <= datetime('now', '-5 days') ORDER BY sent_at DESC LIMIT 10")
+    rows = c.fetchall()
+    conn.close()
+    if not rows:
+        await update.message.reply_text("✅ No applications are due for a 5-day follow-up yet.")
+        return
+    lines = ["⏰ *5-Day Follow-Up Nudges:*\n"]
+    for comp, email, role, sent_at in rows:
+        lines.append(f"• *{comp}* (`{email}`) — {role} _(sent {str(sent_at)[:10]})_")
+    await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+
+async def export_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ALLOWED_USER_ID:
+        return
+    import csv, io, sqlite3
+    db_path = tracker.DB_PATH
+    if not db_path.exists():
+        await update.message.reply_text("No applications logged yet.")
+        return
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute("SELECT id, company, recipient_email, role, subject, sent_at FROM applications ORDER BY sent_at DESC")
+    rows = c.fetchall()
+    conn.close()
+    if not rows:
+        await update.message.reply_text("No applications logged yet.")
+        return
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["id", "company", "recipient_email", "role", "subject", "sent_at"])
+    writer.writerows(rows)
+    data = io.BytesIO(buf.getvalue().encode("utf-8"))
+    data.name = "applications_export.csv"
+    await update.message.reply_document(document=data, caption=f"📊 Exported {len(rows)} applications.")
+
+async def hr_outreach_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ALLOWED_USER_ID:
+        return
+    from apify_hr_outreach.hr_outreach import fetch_apify_hr_leads
+    try:
+        leads = await asyncio.to_thread(fetch_apify_hr_leads, 10)
+    except Exception as e:
+        await update.message.reply_text(f"Apify HR outreach error: `{e}`", parse_mode="Markdown")
+        return
+    if not leads:
+        await update.message.reply_text(
+            "Set `APIFY_API_TOKEN` and `APIFY_HR_DATASET_ID` in `.env` / Render to pull Apify HR leads.",
+            parse_mode="Markdown"
+        )
+        return
+    lines = ["👥 *Apify HR Outreach Leads:*\n"]
+    for item in leads[:10]:
+        title = item.get("title") or item.get("positionName") or "HR / Talent Role"
+        company = item.get("company") or item.get("companyName") or "Company"
+        lines.append(f"• *{company}* — {title}")
+    await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+
+async def autoapply_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ALLOWED_USER_ID:
+        return
+    if not context.args:
+        await update.message.reply_text("Usage: `/autoapply <job_url> [--hr]`", parse_mode="Markdown")
+        return
+    url = context.args[0]
+    hr_flag = "--hr" if "--hr" in context.args else ""
+    try:
+        import playwright  # noqa: F401
+        import subprocess
+        cmd = [sys.executable, str(Path(__file__).parent / "auto_apply_playwright.py"), url]
+        if hr_flag:
+            cmd.append(hr_flag)
+        subprocess.Popen(cmd)
+        await update.message.reply_text(f"🚀 Launched local Playwright auto-filler for `{url}`", parse_mode="Markdown")
+    except ImportError:
+        await update.message.reply_text(
+            f"Playwright isn't available on this server (Render free tier). Run this locally:\n`python auto_apply_playwright.py {url} {hr_flag}`".strip(),
+            parse_mode="Markdown"
+        )
+
 async def process_job_text(text: str, update: Update):
     to_email, role, role_title, company = extract_job_info(text)
 
@@ -943,7 +1055,19 @@ async def process_job_text(text: str, update: Update):
         await update.message.reply_text(intelligent_reply, parse_mode="Markdown")
         return
 
+    applied_emails, applied_companies = get_applied_records()
+    dup_warning = ""
+    if (to_email and to_email.lower() in applied_emails) or (company and company.lower() != "your team" and company.lower() in applied_companies):
+        dup_warning = f"⚠️ *Heads up:* You already have an application logged for `{company}` / `{to_email}`.\n\n"
+
     subject, plain_body, html_body = generate_email_content(role, role_title, company)
+    try:
+        hook = await asyncio.to_thread(_generate_groq_hook, text, company, role_title)
+        if hook:
+            plain_body = f"{hook}\n\n{plain_body}"
+            html_body = html_body.replace("<body>", f"<body><p>{html_lib.escape(hook)}</p>", 1)
+    except Exception:
+        pass
 
     DRAFTS[ALLOWED_USER_ID] = {
         "to": to_email,
@@ -955,7 +1079,7 @@ async def process_job_text(text: str, update: Update):
     }
 
     preview_msg, reply_markup = render_draft_preview(DRAFTS[ALLOWED_USER_ID])
-    await update.message.reply_text(preview_msg, reply_markup=reply_markup, parse_mode="Markdown")
+    await update.message.reply_text(dup_warning + preview_msg, reply_markup=reply_markup, parse_mode="Markdown")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ALLOWED_USER_ID:
@@ -1032,6 +1156,38 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await process_job_text(text, update)
 
+def _extract_text_with_groq_vision(img_path: Path) -> str | None:
+    """Use Groq Vision to accurately extract job text, company, role, and email from a screenshot."""
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        return None
+    import base64
+    with open(img_path, "rb") as f:
+        b64 = base64.b64encode(f.read()).decode("utf-8")
+    payload = json.dumps({
+        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "messages": [{
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Extract all text from this job posting screenshot accurately, especially any email addresses, company name, and job role/title. Return plain text only."},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}},
+            ],
+        }],
+        "temperature": 0.1,
+        "max_tokens": 1024,
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.groq.com/openai/v1/chat/completions",
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        data = json.loads(resp.read().decode("utf-8"))
+    return data["choices"][0]["message"]["content"].strip()
+
 async def handle_photo_or_doc(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ALLOWED_USER_ID:
         return
@@ -1054,9 +1210,16 @@ async def handle_photo_or_doc(update: Update, context: ContextTypes.DEFAULT_TYPE
         img_path = save_dir / f"{file_obj.file_id}.jpg"
         await file.download_to_drive(str(img_path))
 
-        reader = get_ocr_reader()
-        results = await asyncio.to_thread(reader.readtext, str(img_path))
-        extracted_text = " ".join([res[1] for res in results])
+        extracted_text = None
+        try:
+            extracted_text = await asyncio.to_thread(_extract_text_with_groq_vision, img_path)
+        except Exception:
+            extracted_text = None
+
+        if not extracted_text:
+            reader = get_ocr_reader()
+            results = await asyncio.to_thread(reader.readtext, str(img_path))
+            extracted_text = " ".join([res[1] for res in results])
 
         caption = update.message.caption or ""
         combined_text = f"{caption} {extracted_text}".strip()
@@ -1370,6 +1533,10 @@ def main():
     app.add_handler(CommandHandler("subject", subject_command))
     app.add_handler(CommandHandler("stats", stats_command))
     app.add_handler(CommandHandler("list", list_command))
+    app.add_handler(CommandHandler("followups", followups_command))
+    app.add_handler(CommandHandler("autoapply", autoapply_command))
+    app.add_handler(CommandHandler("hr_outreach", hr_outreach_command))
+    app.add_handler(CommandHandler("export", export_command))
     app.add_handler(CommandHandler("menu", lambda u, c: u.message.reply_text("Here's your menu keyboard! 🚀", reply_markup=MAIN_MENU_KEYBOARD)))
     app.add_handler(CommandHandler("minimize", lambda u, c: u.message.reply_text("Keyboard minimized! 📱 Send /menu to reopen.", reply_markup=ReplyKeyboardRemove())))
 
