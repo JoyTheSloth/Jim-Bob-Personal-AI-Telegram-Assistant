@@ -37,25 +37,6 @@
   },
   {
     "source": "RemoteOK",
-    "title": "Product Designer",
-    "company": "Tebra",
-    "category": "UI/UX Designer",
-    "role_type": "uiux",
-    "is_senior": false,
-    "is_junior": false,
-    "location": "US Only",
-    "salary": "Not specified",
-    "url": "https://remoteOK.com/remote-jobs/remote-product-designer-tebra-1137873",
-    "apply_url": "https://remoteOK.com/remote-jobs/remote-product-designer-tebra-1137873",
-    "emails": [
-      "talentacquisition@tebra.com"
-    ],
-    "date": "2026-11-20T02:00:13+00:00",
-    "raw_snippet": "Tebra only initiates contact with candidates via email from an official Tebra email address (@ tebra.com , @ patientpop.com , or @ kareo.com ) or through our applicant tracking system, Greenhouse.\u00c2 We will only ask you to provide sensitive personal information through our official application portal",
-    "already_applied": false
-  },
-  {
-    "source": "RemoteOK",
     "title": "YouTube Video Editor Fresher",
     "company": "Dreamscribe Brands",
     "category": "React Developer",
@@ -90,23 +71,6 @@
   },
   {
     "source": "RemoteOK",
-    "title": "Front Desk Guest Experience Associate",
-    "company": "TruPorch Homes",
-    "category": "React Developer",
-    "role_type": "frontend",
-    "is_senior": false,
-    "is_junior": true,
-    "location": "Manila, Manila, National Capital Region, Philippines",
-    "salary": "Not specified",
-    "url": "https://remoteOK.com/remote-jobs/remote-front-desk-guest-experience-associate-truporch-homes-1132537",
-    "apply_url": "https://remoteOK.com/remote-jobs/remote-front-desk-guest-experience-associate-truporch-homes-1132537",
-    "emails": [],
-    "date": "2026-05-28T19:51:09+00:00",
-    "raw_snippet": "Job Title: Remote Front Desk / Guest Experience Associate (Open to Fresh Grads) Location: Remote (Philippines) Employment Type: Full-Time Department: Guest Services The Opportunity: Bring Your 5-Star Service Home Whether you are a highly motivated fresh graduate , an experienced customer service pro",
-    "already_applied": false
-  },
-  {
-    "source": "RemoteOK",
     "title": "Senior Product Engineer",
     "company": "Arbor Education",
     "category": "UI/UX Designer",
@@ -122,23 +86,6 @@
     ],
     "date": "2026-11-20T00:00:47+00:00",
     "raw_snippet": "Location: Remote - UK Salary: \u00c2\u00a370,000-80,000 About us At Arbor, we\u00e2\u0080\u0099re on a mission to transform the way schools work for the better.\u00c2 We believe in a future of work in schools where being challenged doesn\u00e2\u0080\u0099t mean being burnt out and overworked. Where data guides progress without overwhelming sta",
-    "already_applied": false
-  },
-  {
-    "source": "RemoteOK",
-    "title": "SEO Full Stack Engineer",
-    "company": "Treatwell",
-    "category": "React Developer",
-    "role_type": "frontend",
-    "is_senior": false,
-    "is_junior": false,
-    "location": "Remote",
-    "salary": "Not specified",
-    "url": "https://remoteOK.com/remote-jobs/remote-seo-full-stack-engineer-treatwell-1137805",
-    "apply_url": "https://remoteOK.com/remote-jobs/remote-seo-full-stack-engineer-treatwell-1137805",
-    "emails": [],
-    "date": "2026-11-18T16:00:31+00:00",
-    "raw_snippet": "We're looking for a full-stack engineer to join our Product Engineering team, reporting to one of the Engineering Managers of the Marketplace area, with a dotted line to the Marketing SEO Manager, focused on supporting the Growth and Marketing area. This role will have a 60% focus on Front End, and ",
     "already_applied": false
   },
   {
@@ -366,23 +313,6 @@
   },
   {
     "source": "WeWorkRemotely",
-    "title": "Frontend Engineer, Ads",
-    "company": "Reddit",
-    "category": "Web Developer",
-    "role_type": "frontend",
-    "is_senior": false,
-    "is_junior": false,
-    "location": "Remote",
-    "salary": "Not specified",
-    "url": "https://weworkremotely.com/remote-jobs/reddit-frontend-engineer-ads",
-    "apply_url": "https://weworkremotely.com/remote-jobs/reddit-frontend-engineer-ads",
-    "emails": [],
-    "date": "Mon, 26 Oct 2026 07:31:27 +0000",
-    "raw_snippet": "Headquarters: Remote - United States Reddit is a community of communities. It\u2019s built on shared interests, passion, and trust, and is home to the most open and authentic conversations on the internet. Every day, Reddit users submit, vote, and comment on the topics they care most about. With 100,000+",
-    "already_applied": false
-  },
-  {
-    "source": "WeWorkRemotely",
     "title": "Frontend Engineer",
     "company": "Ritual",
     "category": "Web Developer",
@@ -515,6 +445,25 @@
     "emails": [],
     "date": "Sat, 21 Nov 2026 18:31:36 +0000",
     "raw_snippet": "Headquarters: Atlanta, GA - Hybrid; Denver, CO - Hybrid; New York, NY - Hybrid; San Francisco, CA - Hybrid; Toronto, Ontario - Remote About Gusto At Gusto, we're on a mission to grow the small business economy. We handle the hard stuff \u2014 payroll, health insurance, 401(k)s, and HR \u2014 so owners can foc",
+    "already_applied": false
+  },
+  {
+    "source": "WeWorkRemotely",
+    "title": "Product Designer",
+    "company": "Tebra",
+    "category": "UI/UX Designer",
+    "role_type": "uiux",
+    "is_senior": false,
+    "is_junior": false,
+    "location": "Remote",
+    "salary": "Not specified",
+    "url": "https://weworkremotely.com/remote-jobs/tebra-product-designer",
+    "apply_url": "https://weworkremotely.com/remote-jobs/tebra-product-designer",
+    "emails": [
+      "talentacquisition@tebra.com"
+    ],
+    "date": "Thu, 19 Nov 2026 18:31:26 +0000",
+    "raw_snippet": "Headquarters: United States - Remote Tebra only initiates contact with candidates via email from an official Tebra email address (@ tebra.com , @ patientpop.com , or @ kareo.com ) or through our applicant tracking system, Greenhouse. We will only ask you to provide sensitive personal information thr",
     "already_applied": false
   },
   {
